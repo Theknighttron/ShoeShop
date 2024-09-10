@@ -1,269 +1,244 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'signin_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+    const SignUpScreen({Key? key}) : super(key: key);
 
-  @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+    @override
+    State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController _passwordTextController = TextEditingController();
-  final TextEditingController _emailTextController = TextEditingController();
-  final TextEditingController _userNameTextController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade900, Colors.lightBlueAccent],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                20, MediaQuery.of(context).size.height * 0.09, 20, 0),
-            child: Column(children: [
-              Image.asset(
-                "../assets/images/shopLogo.png",
-                fit: BoxFit.fitWidth,
-                width: 340,
-                height: 340,
-              ),
-              TextField(
-                controller: _userNameTextController,
-                obscureText: false,
-                enableSuggestions: !false,
-                autocorrect: !false,
-                cursorColor: Colors.yellow,
-                style: TextStyle(color: Colors.blue.shade900),
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.person_2_outlined,
-                    color: Colors.yellow,
-                  ),
-                  labelText: "Enter your Username",
-                  labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
-                  filled: true,
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  fillColor: Colors.yellow.withOpacity(0.3),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide:
-                          const BorderSide(width: 0, style: BorderStyle.none)),
+    final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController _userNameController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+    bool _isLoading = false;
+    String? _errorMessage;
+
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+            body: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.blue.shade900, Colors.lightBlueAccent],
+                    ),
                 ),
-                keyboardType:
-                    false ? TextInputType.visiblePassword : TextInputType.name,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                controller: _emailTextController,
-                obscureText: false,
-                enableSuggestions: !false,
-                autocorrect: !false,
-                cursorColor: Colors.yellow,
-                style: TextStyle(color: Colors.blue.shade900),
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.person_2_outlined,
-                    color: Colors.yellow,
-                  ),
-                  labelText: "Enter your Email",
-                  labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
-                  filled: true,
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  fillColor: Colors.yellow.withOpacity(0.3),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide:
-                          const BorderSide(width: 0, style: BorderStyle.none)),
-                ),
-                keyboardType: false
-                    ? TextInputType.visiblePassword
-                    : TextInputType.emailAddress,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                controller: _passwordTextController,
-                obscureText: true,
-                enableSuggestions: !true,
-                autocorrect: !true,
-                cursorColor: Colors.yellow,
-                style: TextStyle(color: Colors.blue.shade900),
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.lock_outline_rounded,
-                    color: Colors.yellow,
-                  ),
-                  labelText: "Enter your Password",
-                  labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
-                  filled: true,
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  fillColor: Colors.yellow.withOpacity(0.3),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide:
-                          const BorderSide(width: 0, style: BorderStyle.none)),
-                ),
-                keyboardType: false
-                    ? TextInputType.visiblePassword
-                    : TextInputType.visiblePassword,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 60,
-                margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(90)),
-                child: ElevatedButton(
-                  onPressed: () {
-                    FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: _emailTextController.text,
-                            password: _passwordTextController.text)
-                        .then(
-                      (value) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SigninScreen(),
-                          ),
-                        );
-                      },
-                    ).onError(
-                      (error, stackTrace) {
-                        var invalidemailError =
-                            "[firebase_auth/invalid-email] The email address is badly formatted.";
-                        var emailExistError =
-                            "[firebase_auth/email-already-in-use] The email address is already in use by another account.";
-                        var weakPassword =
-                            "[firebase_auth/weak-password] Password should be at least 6 characters";
-                        print(error);
-                        if (error.toString() == invalidemailError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: Colors.yellowAccent,
-                              dismissDirection: DismissDirection.up,
-                              duration: const Duration(seconds: 7),
-                              content: const Text(
-                                "       📛Invalid Email format📛",
-                                style: TextStyle(
-                                    backgroundColor: Colors.yellowAccent,
-                                    color: Colors.red,
-                                    fontSize: 30),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                            ),
-                          );
-                        } else if (error.toString() == emailExistError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: Colors.yellowAccent,
-                              dismissDirection: DismissDirection.up,
-                              duration: const Duration(seconds: 7),
-                              content: const Text(
-                                "       📛Email is already Exist📛",
-                                style: TextStyle(
-                                    backgroundColor: Colors.yellowAccent,
-                                    color: Colors.red,
-                                    fontSize: 30),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                            ),
-                          );
-                        } else if (error.toString() == weakPassword) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: Colors.yellowAccent,
-                              dismissDirection: DismissDirection.up,
-                              duration: const Duration(seconds: 7),
-                              content: const Text(
-                                "       📛Weak Password,Plz Enter at least 6 characters📛",
-                                style: TextStyle(
-                                    backgroundColor: Colors.yellowAccent,
-                                    color: Colors.red,
-                                    fontSize: 30),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                            ),
-                          );
+                child: SafeArea(
+                    child: Center(
+                        child: SingleChildScrollView(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Form(
+                                key: _formKey,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                        Image.asset(
+                                            "../assets/images/shopLogo.png",
+                                            width: 150,
+                                            height: 150,
+                                        ),
+                                        const SizedBox(height: 40),
+                                        if (_errorMessage != null)
+                                        Container(
+                                            padding: const EdgeInsets.all(12),
+                                            margin: const EdgeInsets.only(bottom: 20),
+                                            decoration: BoxDecoration(
+                                                color: Colors.red.withOpacity(0.1),
+                                                borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                                _errorMessage!,
+                                                style: const TextStyle(color: Colors.white),
+                                                textAlign: TextAlign.center,
+                                            ),
+                                        ),
+                                        _buildTextField(
+                                            controller: _userNameController,
+                                            hintText: "Username",
+                                            icon: Icons.person,
+                                            validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                          return 'Please enter a username';
                         }
-                      },
-                    );
-                  },
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.resolveWith((states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.blue;
+                                                return null;
+                                            },
+                                        ),
+                                        const SizedBox(height: 16),
+                                        _buildTextField(
+                                            controller: _emailController,
+                                            hintText: "Email",
+                                            icon: Icons.email,
+                                            keyboardType: TextInputType.emailAddress,
+                                            validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                          return 'Please enter an email';
                         }
-                        return Colors.yellow;
-                      }),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30)))),
-                  child: const Text(
-                    "SignUp",
+                                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                          return 'Please enter a valid email';
+                        }
+                                                return null;
+                                            },
+                                        ),
+                                        const SizedBox(height: 16),
+                                        _buildTextField(
+                                            controller: _passwordController,
+                                            hintText: "Password",
+                                            icon: Icons.lock,
+                                            obscureText: true,
+                                            validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                          return 'Please enter a password';
+                        }
+                                                if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                                                return null;
+                                            },
+                                        ),
+                                        const SizedBox(height: 24),
+                                        _buildSignUpButton(),
+                                        const SizedBox(height: 16),
+                                        _buildSignInLink(),
+                                    ],
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    Widget _buildTextField({
+        required TextEditingController controller,
+        required String hintText,
+        required IconData icon,
+        bool obscureText = false,
+        TextInputType? keyboardType,
+        String? Function(String?)? validator,
+    }) {
+        return TextFormField(
+            controller: controller,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+                prefixIcon: Icon(icon, color: Colors.white70),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.1),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                ),
+                errorStyle: const TextStyle(color: Colors.white),
+            ),
+            validator: validator,
+        );
+    }
+
+    Widget _buildSignUpButton() {
+        return SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+                onPressed: _isLoading ? null : _handleSignUp,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                    ),
+                ),
+                child: _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                        strokeWidth: 2,
+                    ),
+                )
+                : const Text(
+                    "Sign Up",
                     style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
+                        fontSize: 18,
+                    ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Already have account?",
+            ),
+        );
+    }
+
+    Widget _buildSignInLink() {
+        return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                const Text(
+                    "Already have an account?",
                     style: TextStyle(color: Colors.white70),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SigninScreen()));
+                ),
+                TextButton(
+                    onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SigninScreen()),
+                        );
                     },
                     child: const Text(
-                      " Sign In",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                        "Sign In",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                        ),
                     ),
-                  ),
-                ],
-              )
-            ]),
-          ),
-        ),
-      ),
-    );
-  }
+                ),
+            ],
+        );
+    }
+
+    void _handleSignUp() async {
+        setState(() {
+            _errorMessage = null;
+        });
+
+        if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SigninScreen()),
+        );
+      } on FirebaseAuthException catch (e) {
+        setState(() {
+          _errorMessage = _getErrorMessage(e.code);
+        });
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+    }
+
+    String _getErrorMessage(String errorCode) {
+        switch (errorCode) {
+            case 'weak-password':
+                return 'The password provided is too weak.';
+            case 'email-already-in-use':
+                return 'An account already exists for that email.';
+            case 'invalid-email':
+                return 'The email address is badly formatted.';
+            default:
+                return 'An error occurred. Please try again.';
+        }
+    }
 }
