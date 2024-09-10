@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "652658768837",
+    "project_id": "flutter-auth-95a4d",
+    "storage_bucket": "flutter-auth-95a4d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652658768837:android:e4242ae559044d8983e9ac",
+        "android_client_info": {
+          "package_name": "com.flutter.auth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3EszITzPiuub9BYYYQozxajA8R3GWmN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
