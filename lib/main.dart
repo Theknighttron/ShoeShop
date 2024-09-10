@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     Widget build(BuildContext context) {
         return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Your App Name',
+            title: 'Cocron Shoe',
             theme: ThemeData(
                 primarySwatch: Colors.blue,
                 brightness: Brightness.dark,
